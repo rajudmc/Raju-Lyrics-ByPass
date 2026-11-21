@@ -27,7 +27,6 @@
       text-align: center;
       margin-bottom: 22px;
     }
-    /* Heading me continuous loop shine/wave animation */
     .header h1 {
       font-size: 28px;
       margin: 0 0 6px 0;
@@ -70,7 +69,7 @@
     }
     textarea {
       width: 100%;
-      height: 150px;
+      height: 140px;
       background-color: #09090b;
       color: #fefce8;
       border: 1px solid #27272a;
@@ -104,19 +103,16 @@
     button:active {
       transform: scale(0.96);
     }
-    /* Pehele jaisa Purple-Pink Bypass button */
     .btn-bypass {
       background: linear-gradient(135deg, #8b5cf6, #ec4899);
       color: white;
       box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
     }
-    /* Pehele jaisa Cyan-Green Copy button */
     .btn-copy {
       background: linear-gradient(135deg, #06b6d4, #10b981);
       color: #042f2e;
       box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
     }
-    /* Dono buttons ke liye Grey state aur pop animation */
     .done-grey {
       background: #3f3f46 !important;
       color: #d4d4d8 !important;
@@ -150,6 +146,23 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .xray-box {
+      display: none;
+      background: #121215;
+      border: 1px dashed #facc15;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.7;
+      word-break: break-all;
+      color: #e4e4e7;
+    }
+    .inv-tag {
+      color: #f43f5e;
+      font-weight: bold;
+      font-size: 11px;
+    }
     .status-bar {
       text-align: center;
       font-size: 13px;
@@ -181,12 +194,17 @@
 
     <button id="bypassBtn" class="btn-bypass" onclick="processLyrics()">⚡ Bypass Lyrics</button>
 
-    <!-- Yeh section button dabane ke baad khulega -->
     <div id="resultSection">
       <div class="label-row">
         <span>✅ Bypassed Lyrics Ready</span>
-        <span id="charCount" style="color:#facc15; font-size:12px;">0 chars</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="btn-ghost" id="xrayBtn" onclick="toggleXray()">👁️ X-Ray</button>
+          <span id="charCount" style="color:#facc15; font-size:12px;">0 chars</span>
+        </div>
       </div>
+
+      <!-- Yahan invisible characters aankhon se dikhenge -->
+      <div id="xrayBox" class="xray-box"></div>
       
       <textarea id="outputLyrics" readonly></textarea>
       
@@ -198,6 +216,9 @@
 </div>
 
 <script>
+  let rawBypassedText = "";
+  let xrayOpen = false;
+
   function resetBypassBtn() {
     const btn = document.getElementById('bypassBtn');
     btn.classList.remove('done-grey');
@@ -221,23 +242,34 @@
     btn.classList.remove('done-grey');
     btn.innerText = "⏳ Processing...";
     statusEl.style.color = '#fde047';
-    statusEl.innerText = "Har letter ke aage invisible character add ho raha hai...";
+    statusEl.innerText = "Strong invisible characters add ho rahe hain...";
 
     setTimeout(() => {
-      const zws = '\u200B'; // Zero-Width Space
+      // Zero-Width Non-Joiner (\u200C) + Word Joiner (\u2060) jo clipboard se delete nahi hota
+      const inv = '\u200C\u2060'; 
       
       const bypassed = input.split('\n').map(line => {
         const trimmed = line.trim();
         if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
           return line;
         }
-        return line.split('').map(char => {
-          return char.trim() !== '' ? zws + char : char;
-        }).join('');
+        // Har shabd ke aksharon ke beech mein invisible character dalna
+        return line.split(' ').map(word => {
+          if (word.length <= 1) return word;
+          return word.split('').join(inv);
+        }).join(' ');
       }).join('\n');
 
+      rawBypassedText = bypassed;
       document.getElementById('outputLyrics').value = bypassed;
       document.getElementById('charCount').innerText = bypassed.length + " chars";
+
+      // X-Ray preview taiyar karna
+      const xrayHtml = bypassed
+        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+        .replace(/\u200C\u2060/g, '<span class="inv-tag">•</span>')
+        .replace(/\n/g, '<br>');
+      document.getElementById('xrayBox').innerHTML = xrayHtml;
       
       copyBtn.classList.remove('done-grey');
       copyBtn.innerText = "📋 Copy Lyrics";
@@ -250,8 +282,16 @@
       btn.innerText = "✅ Done!";
 
       statusEl.style.color = '#facc15';
-      statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
-    }, 450);
+      statusEl.innerText = "✨ Done! '👁️ X-Ray' dabakar hidden dots check karein.";
+    }, 400);
+  }
+
+  function toggleXray() {
+    const box = document.getElementById('xrayBox');
+    const btn = document.getElementById('xrayBtn');
+    xrayOpen = !xrayOpen;
+    box.style.display = xrayOpen ? 'block' : 'none';
+    btn.innerText = xrayOpen ? "🙈 Hide X-Ray" : "👁️ X-Ray";
   }
 
   async function pasteLyrics() {
@@ -287,6 +327,9 @@
     const copyBtn = document.getElementById('copyBtn');
     document.getElementById('inputLyrics').value = '';
     document.getElementById('outputLyrics').value = '';
+    document.getElementById('xrayBox').style.display = 'none';
+    xrayOpen = false;
+    document.getElementById('xrayBtn').innerText = "👁️ X-Ray";
     document.getElementById('resultSection').style.display = 'none';
     document.getElementById('statusText').innerText = '';
     resetBypassBtn();
