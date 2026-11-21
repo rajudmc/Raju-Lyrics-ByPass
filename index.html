@@ -69,7 +69,7 @@
     }
     textarea {
       width: 100%;
-      height: 140px;
+      height: 150px;
       background-color: #09090b;
       color: #fefce8;
       border: 1px solid #27272a;
@@ -146,23 +146,6 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .xray-box {
-      display: none;
-      background: #121215;
-      border: 1px dashed #facc15;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-      font-size: 14px;
-      line-height: 1.7;
-      word-break: break-all;
-      color: #e4e4e7;
-    }
-    .inv-tag {
-      color: #f43f5e;
-      font-weight: bold;
-      font-size: 11px;
-    }
     .status-bar {
       text-align: center;
       font-size: 13px;
@@ -197,14 +180,8 @@
     <div id="resultSection">
       <div class="label-row">
         <span>✅ Bypassed Lyrics Ready</span>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <button class="btn-ghost" id="xrayBtn" onclick="toggleXray()">👁️ X-Ray</button>
-          <span id="charCount" style="color:#facc15; font-size:12px;">0 chars</span>
-        </div>
+        <span id="charCount" style="color:#facc15; font-size:12px;">0 chars</span>
       </div>
-
-      <!-- Yahan invisible characters aankhon se dikhenge -->
-      <div id="xrayBox" class="xray-box"></div>
       
       <textarea id="outputLyrics" readonly></textarea>
       
@@ -216,9 +193,6 @@
 </div>
 
 <script>
-  let rawBypassedText = "";
-  let xrayOpen = false;
-
   function resetBypassBtn() {
     const btn = document.getElementById('bypassBtn');
     btn.classList.remove('done-grey');
@@ -242,10 +216,9 @@
     btn.classList.remove('done-grey');
     btn.innerText = "⏳ Processing...";
     statusEl.style.color = '#fde047';
-    statusEl.innerText = "Strong invisible characters add ho rahe hain...";
+    statusEl.innerText = "Har letter ke beech invisible character add ho raha hai...";
 
     setTimeout(() => {
-      // Zero-Width Non-Joiner (\u200C) + Word Joiner (\u2060) jo clipboard se delete nahi hota
       const inv = '\u200C\u2060'; 
       
       const bypassed = input.split('\n').map(line => {
@@ -253,23 +226,14 @@
         if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
           return line;
         }
-        // Har shabd ke aksharon ke beech mein invisible character dalna
         return line.split(' ').map(word => {
           if (word.length <= 1) return word;
           return word.split('').join(inv);
         }).join(' ');
       }).join('\n');
 
-      rawBypassedText = bypassed;
       document.getElementById('outputLyrics').value = bypassed;
       document.getElementById('charCount').innerText = bypassed.length + " chars";
-
-      // X-Ray preview taiyar karna
-      const xrayHtml = bypassed
-        .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-        .replace(/\u200C\u2060/g, '<span class="inv-tag">•</span>')
-        .replace(/\n/g, '<br>');
-      document.getElementById('xrayBox').innerHTML = xrayHtml;
       
       copyBtn.classList.remove('done-grey');
       copyBtn.innerText = "📋 Copy Lyrics";
@@ -282,16 +246,8 @@
       btn.innerText = "✅ Done!";
 
       statusEl.style.color = '#facc15';
-      statusEl.innerText = "✨ Done! '👁️ X-Ray' dabakar hidden dots check karein.";
-    }, 400);
-  }
-
-  function toggleXray() {
-    const box = document.getElementById('xrayBox');
-    const btn = document.getElementById('xrayBtn');
-    xrayOpen = !xrayOpen;
-    box.style.display = xrayOpen ? 'block' : 'none';
-    btn.innerText = xrayOpen ? "🙈 Hide X-Ray" : "👁️ X-Ray";
+      statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
+    }, 450);
   }
 
   async function pasteLyrics() {
@@ -327,9 +283,6 @@
     const copyBtn = document.getElementById('copyBtn');
     document.getElementById('inputLyrics').value = '';
     document.getElementById('outputLyrics').value = '';
-    document.getElementById('xrayBox').style.display = 'none';
-    xrayOpen = false;
-    document.getElementById('xrayBtn').innerText = "👁️ X-Ray";
     document.getElementById('resultSection').style.display = 'none';
     document.getElementById('statusText').innerText = '';
     resetBypassBtn();
