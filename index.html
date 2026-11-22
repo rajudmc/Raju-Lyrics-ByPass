@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Raju Lyrics ByPass</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     body {
       background: radial-gradient(circle at top, #292008 0%, #09090b 100%);
       color: #fefce8;
@@ -18,145 +15,114 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
     }
-    .container {
-      max-width: 600px;
-      width: 100%;
+    #butterfly-layer {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 5; overflow: hidden; perspective: 1200px;
     }
-    .header {
-      text-align: center;
-      margin-bottom: 22px;
+    #fx-overlay-layer {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 25; overflow: hidden;
     }
+    .butterfly-3d { position: absolute; top: 0; left: 0; transform-style: preserve-3d; will-change: transform; }
+    .butterfly-rig { position: relative; transform-style: preserve-3d; transition: transform 0.8s ease; }
+    .butterfly-3d.flying .wing-left-real { transform-origin: 70px 70px; animation: flapLeftFly 0.42s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate; }
+    .butterfly-3d.flying .wing-right-real { transform-origin: 70px 70px; animation: flapRightFly 0.42s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate; }
+    .butterfly-3d.perched .wing-left-real { transform-origin: 70px 70px; animation: flapLeftRest 1.9s ease-in-out infinite alternate; }
+    .butterfly-3d.perched .wing-right-real { transform-origin: 70px 70px; animation: flapRightRest 1.9s ease-in-out infinite alternate; }
+    @keyframes flapLeftFly { 0% { transform: rotateY(-10deg) rotateZ(2deg); } 100% { transform: rotateY(72deg) rotateZ(-5deg); } }
+    @keyframes flapRightFly { 0% { transform: rotateY(10deg) rotateZ(-2deg); } 100% { transform: rotateY(-72deg) rotateZ(5deg); } }
+    @keyframes flapLeftRest { 0% { transform: rotateY(18deg) rotateZ(0deg); } 100% { transform: rotateY(62deg) rotateZ(-3deg); } }
+    @keyframes flapRightRest { 0% { transform: rotateY(-18deg) rotateZ(0deg); } 100% { transform: rotateY(-62deg) rotateZ(3deg); } }
+    .butterfly-3d.flying .side-wing-front { transform-origin: 55px 72px; animation: sideFlapFront 0.40s ease-in-out infinite alternate; }
+    .butterfly-3d.flying .side-wing-back { transform-origin: 55px 72px; animation: sideFlapBack 0.40s ease-in-out infinite alternate; }
+    .butterfly-3d.perched .side-wing-front { transform-origin: 55px 72px; animation: sideRestFront 1.8s ease-in-out infinite alternate; }
+    .butterfly-3d.perched .side-wing-back { transform-origin: 55px 72px; animation: sideRestBack 1.8s ease-in-out infinite alternate; }
+    @keyframes sideFlapFront { 0% { transform: rotateX(0deg) scaleY(1); } 100% { transform: rotateX(68deg) scaleY(0.35); } }
+    @keyframes sideFlapBack { 0% { transform: rotateX(-12deg) scaleY(0.92) translate(-4px, -3px); } 100% { transform: rotateX(55deg) scaleY(0.30) translate(-2px, -1px); } }
+    @keyframes sideRestFront { 0% { transform: rotateX(8deg) scaleY(0.95); } 100% { transform: rotateX(45deg) scaleY(0.55); } }
+    @keyframes sideRestBack { 0% { transform: rotateX(0deg) scaleY(0.88) translate(-4px, -3px); } 100% { transform: rotateX(36deg) scaleY(0.50) translate(-2px, -1px); } }
+    .landing-ring {
+      position: absolute; width: 14px; height: 14px; border-radius: 50%;
+      border: 2.5px solid var(--glow-color); box-shadow: 0 0 14px var(--glow-color), inset 0 0 8px var(--glow-color);
+      transform: translate(-50%, -50%) scale(0.2); pointer-events: none;
+      animation: rippleExpand 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .landing-ring-2 {
+      position: absolute; width: 14px; height: 14px; border-radius: 50%;
+      border: 1.5px solid var(--glow-light); box-shadow: 0 0 18px var(--glow-color);
+      transform: translate(-50%, -50%) scale(0.2); pointer-events: none;
+      animation: rippleExpand 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards;
+    }
+    @keyframes rippleExpand { 0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.95; } 100% { transform: translate(-50%, -50%) scale(6.5); opacity: 0; } }
+    .landing-spark {
+      position: absolute; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--glow-light); box-shadow: 0 0 8px var(--glow-color), 0 0 12px var(--glow-light);
+      pointer-events: none; animation: sparkFly 1.3s ease-out forwards;
+    }
+    @keyframes sparkFly { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; } }
+    .touch-ripple {
+      position: absolute; width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid #facc15; box-shadow: 0 0 14px #f59e0b, inset 0 0 8px #fef08a;
+      transform: translate(-50%, -50%) scale(0.2); pointer-events: none;
+      animation: touchWave 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes touchWave { 0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(4.2); opacity: 0; } }
+    .touch-dot {
+      position: absolute; width: 4.5px; height: 4.5px; border-radius: 50%;
+      background: var(--t-color); box-shadow: 0 0 8px var(--t-color);
+      pointer-events: none; animation: touchSpark 0.65s ease-out forwards;
+    }
+    @keyframes touchSpark { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); opacity: 0; } }
+    .container { max-width: 600px; width: 100%; position: relative; }
+    .header { text-align: center; margin-bottom: 22px; position: relative; z-index: 10; }
     .header h1 {
-      font-size: 28px;
-      margin: 0 0 6px 0;
+      font-size: 28px; margin: 0 0 6px 0;
       background: linear-gradient(90deg, #f59e0b, #fef08a, #ffffff, #facc15, #f59e0b);
-      background-size: 250% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 800;
-      animation: textLoopShine 3s linear infinite, floatPulse 2.5s ease-in-out infinite;
+      background-size: 250% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      font-weight: 800; animation: textLoopShine 3s linear infinite, floatPulse 2.5s ease-in-out infinite;
     }
-    @keyframes textLoopShine {
-      0% { background-position: 0% center; }
-      100% { background-position: 250% center; }
-    }
-    @keyframes floatPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-    .header p {
-      color: #a1a1aa;
-      margin: 0;
-      font-size: 13px;
-    }
+    @keyframes textLoopShine { 0% { background-position: 0% center; } 100% { background-position: 250% center; } }
+    @keyframes floatPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    .header p { color: #a1a1aa; margin: 0; font-size: 13px; }
     .card {
-      background: rgba(24, 24, 27, 0.9);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(250, 204, 21, 0.35);
-      border-radius: 16px;
-      padding: 20px;
+      position: relative; z-index: 2; background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(10px);
+      border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 16px; padding: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 22px rgba(250, 204, 21, 0.14);
     }
-    .label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: #fef08a;
-      font-weight: 600;
-    }
+    .label-row, textarea, button, #resultSection, .status-bar { position: relative; z-index: 10; }
+    .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: #fef08a; font-weight: 600; }
     textarea {
-      width: 100%;
-      height: 150px;
-      background-color: #09090b;
-      color: #fefce8;
-      border: 1px solid #27272a;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 15px;
-      line-height: 1.5;
-      resize: vertical;
-      margin-bottom: 14px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%; height: 150px; background-color: rgba(9, 9, 11, 0.78); color: #fefce8;
+      border: 1px solid rgba(250, 204, 21, 0.25); border-radius: 12px; padding: 14px;
+      font-size: 15px; line-height: 1.5; resize: vertical; margin-bottom: 14px;
     }
-    textarea:focus {
-      outline: none;
-      border-color: #facc15;
-      box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
-    }
+    textarea:focus { outline: none; border-color: #facc15; box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2); }
     button {
-      width: 100%;
-      border: none;
-      padding: 14px 18px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      width: 100%; border: none; padding: 14px 18px; border-radius: 12px; cursor: pointer;
+      font-size: 15px; font-weight: 700; transition: all 0.25s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    button:active {
-      transform: scale(0.96);
-    }
-    .btn-bypass {
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      color: white;
-      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
-    }
-    .btn-copy {
-      background: linear-gradient(135deg, #06b6d4, #10b981);
-      color: #042f2e;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-    }
-    .done-grey {
-      background: #3f3f46 !important;
-      color: #d4d4d8 !important;
-      box-shadow: none !important;
-      border: 1px solid #52525b !important;
-      animation: popPulse 0.35s ease;
-    }
-    @keyframes popPulse {
-      0% { transform: scale(1); }
-      40% { transform: scale(0.92); }
-      75% { transform: scale(1.03); }
-      100% { transform: scale(1); }
-    }
-    .btn-ghost {
-      width: auto;
-      background-color: #27272a;
-      color: #fef08a;
-      border: 1px solid rgba(250, 204, 21, 0.2);
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 8px;
-    }
-    #resultSection {
-      display: none;
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px dashed rgba(250, 204, 21, 0.4);
-      animation: fadeIn 0.35s ease;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .status-bar {
-      text-align: center;
-      font-size: 13px;
-      color: #facc15;
-      min-height: 18px;
-      margin-top: 12px;
-      font-weight: 500;
-    }
+    button:active { transform: scale(0.96); }
+    .btn-bypass { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: white; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4); }
+    .btn-copy { background: linear-gradient(135deg, #06b6d4, #10b981); color: #042f2e; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); }
+    .done-grey { background: #3f3f46 !important; color: #d4d4d8 !important; box-shadow: none !important; border: 1px solid #52525b !important; animation: popPulse 0.35s ease; }
+    @keyframes popPulse { 0% { transform: scale(1); } 40% { transform: scale(0.92); } 75% { transform: scale(1.03); } 100% { transform: scale(1); } }
+    .btn-ghost { width: auto; background-color: #27272a; color: #fef08a; border: 1px solid rgba(250, 204, 21, 0.2); padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+    #resultSection { display: none; margin-top: 20px; padding-top: 18px; border-top: 1px dashed rgba(250, 204, 21, 0.4); animation: fadeIn 0.35s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .status-bar { text-align: center; font-size: 13px; color: #facc15; min-height: 18px; margin-top: 12px; font-weight: 500; }
   </style>
 </head>
 <body>
+
+<audio id="bgSong" src="song.mp3" autoplay loop playsinline preload="auto"></audio>
+
+<div id="butterfly-layer"></div>
+<div id="fx-overlay-layer"></div>
 
 <div class="container">
   <div class="header">
@@ -166,10 +132,10 @@
 
   <div class="card">
     <div class="label-row">
-      <span>📝 Enter Your Lyrics</span>
+      <span id="target-label">📝 Enter Your Lyrics</span>
       <div style="display:flex; gap:6px;">
-        <button class="btn-ghost" onclick="pasteLyrics()">📋 Paste</button>
-        <button class="btn-ghost" onclick="clearAll()">🗑️ Reset</button>
+        <button id="target-paste" class="btn-ghost" onclick="pasteLyrics()">📋 Paste</button>
+        <button id="target-reset" class="btn-ghost" onclick="clearAll()">🗑️ Reset</button>
       </div>
     </div>
     
@@ -193,63 +159,226 @@
 </div>
 
 <script>
-  function resetBypassBtn() {
-    const btn = document.getElementById('bypassBtn');
-    btn.classList.remove('done-grey');
-    btn.innerText = " ⚡ Bypass Lyrics ";
+  const butterflyLayer = document.getElementById('butterfly-layer');
+  const fxOverlayLayer = document.getElementById('fx-overlay-layer');
+  const bgSong = document.getElementById('bgSong');
+
+  function playSongNow() {
+    if (bgSong && bgSong.paused) {
+      bgSong.volume = 0.9;
+      bgSong.play().catch(() => {});
+    }
   }
 
+  window.addEventListener('DOMContentLoaded', playSongNow);
+  ['touchstart', 'touchend', 'click', 'keydown'].forEach(evt => {
+    document.addEventListener(evt, playSongNow, { passive: true });
+  });
+
+  const touchColors = ['#facc15', '#38bdf8', '#ec4899', '#a855f7', '#34d399', '#fb923c'];
+  let lastTouchTime = 0;
+  function spawnTouchAnimation(x, y) {
+    const now = Date.now();
+    if (now - lastTouchTime < 45) return;
+    lastTouchTime = now;
+    const ripple = document.createElement('div');
+    ripple.className = 'touch-ripple';
+    ripple.style.left = x + 'px'; ripple.style.top = y + 'px';
+    fxOverlayLayer.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 800);
+    for (let i = 0; i < 7; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'touch-dot';
+      dot.style.left = x + 'px'; dot.style.top = y + 'px';
+      dot.style.setProperty('--t-color', touchColors[Math.floor(Math.random() * touchColors.length)]);
+      const angle = (Math.PI * 2 * i) / 7 + Math.random() * 0.5;
+      const dist = 22 + Math.random() * 28;
+      dot.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      dot.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      fxOverlayLayer.appendChild(dot);
+      setTimeout(() => dot.remove(), 700);
+    }
+  }
+  window.addEventListener('pointerdown', (e) => spawnTouchAnimation(e.clientX, e.clientY));
+  window.addEventListener('pointermove', (e) => { if (e.buttons > 0 || e.pointerType === 'touch') spawnTouchAnimation(e.clientX, e.clientY); });
+
+  const speciesList = [
+    { name: 'monarch', cInner: '#ff9e00', cMid: '#ff5400', cBorder: '#111111', veinColor: '#111111', glowColor: '#ff7b00', glowLight: '#ffe066', hasStripes: false },
+    { name: 'morpho', cInner: '#38bdf8', cMid: '#0284c7', cBorder: '#090d16', veinColor: '#0c243c', glowColor: '#0ea5e9', glowLight: '#bae6fd', hasStripes: false },
+    { name: 'swallowtail', cInner: '#fef08a', cMid: '#eab308', cBorder: '#14120e', veinColor: '#14120e', glowColor: '#eab308', glowLight: '#fef9c3', hasStripes: true },
+    { name: 'rose', cInner: '#f472b6', cMid: '#db2777', cBorder: '#1a0912', veinColor: '#2e091b', glowColor: '#ec4899', glowLight: '#fbcfe8', hasStripes: false }
+  ];
+
+  function createTopViewButterfly(sp, size, tiltDeg) {
+    const id = 'top_' + Math.random().toString(36).substr(2, 9);
+    const tigerStripesLeft = sp.hasStripes ? '<path d="M46 42 L35 28 M40 48 L25 32 M33 54 L18 41" stroke="#14120e" stroke-width="3.2" stroke-linecap="round"/>' : '';
+    const tigerStripesRight = sp.hasStripes ? '<path d="M94 42 L105 28 M100 48 L115 32 M107 54 L122 41" stroke="#14120e" stroke-width="3.2" stroke-linecap="round"/>' : '';
+    return `<div class="butterfly-rig" style="transform: rotateX(${tiltDeg}deg); filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.75));">
+      <svg width="${size}" height="${size}" viewBox="0 0 140 140" style="overflow: visible;">
+        <defs><radialGradient id="g_${id}" cx="45%" cy="48%" r="65%"><stop offset="0%" stop-color="${sp.cInner}"/><stop offset="68%" stop-color="${sp.cMid}"/><stop offset="88%" stop-color="${sp.cBorder}"/><stop offset="100%" stop-color="${sp.cBorder}"/></radialGradient></defs>
+        <g class="wing-left-real"><path d="M68 64 C50 28, 14 10, 6 28 C1 41, 12 60, 36 66 C50 69, 61 68, 68 67 Z" fill="url(#g_${id})" stroke="${sp.cBorder}" stroke-width="4.5" stroke-linejoin="round"/><path d="M68 69 C45 68, 18 82, 24 106 C27 116, 36 117, 39 127 C41 131, 44 123, 47 116 C52 119, 58 112, 62 100 C66 88, 68 78, 68 69 Z" fill="url(#g_${id})" stroke="${sp.cBorder}" stroke-width="4.2" stroke-linejoin="round"/><path d="M66 64 L16 26 M66 65 L10 38 M66 66 L16 52 M44 46 L26 20 M66 72 L30 100 M66 74 L43 112 M67 76 L56 104" stroke="${sp.veinColor}" stroke-width="2.1" stroke-linecap="round"/>${tigerStripesLeft}<circle cx="9" cy="26" r="1.6" fill="#ffffff"/><circle cx="6" cy="34" r="1.5" fill="#ffffff"/><circle cx="8" cy="42" r="1.5" fill="#ffffff"/><circle cx="12" cy="50" r="1.4" fill="#ffffff"/><circle cx="24" cy="102" r="1.5" fill="#ffffff"/><circle cx="28" cy="110" r="1.4" fill="#ffffff"/></g>
+        <g class="wing-right-real"><path d="M72 64 C90 28, 126 10, 134 28 C139 41, 128 60, 104 66 C90 69, 79 68, 72 67 Z" fill="url(#g_${id})" stroke="${sp.cBorder}" stroke-width="4.5" stroke-linejoin="round"/><path d="M72 69 C95 68, 122 82, 116 106 C113 116, 104 117, 101 127 C99 131, 96 123, 93 116 C88 119, 82 112, 78 100 C74 88, 72 78, 72 69 Z" fill="url(#g_${id})" stroke="${sp.cBorder}" stroke-width="4.2" stroke-linejoin="round"/><path d="M74 64 L124 26 M74 65 L130 38 M74 66 L124 52 M96 46 L114 20 M74 72 L110 100 M74 74 L97 112 M73 76 L84 104" stroke="${sp.veinColor}" stroke-width="2.1" stroke-linecap="round"/>${tigerStripesRight}<circle cx="131" cy="26" r="1.6" fill="#ffffff"/><circle cx="134" cy="34" r="1.5" fill="#ffffff"/><circle cx="132" cy="42" r="1.5" fill="#ffffff"/><circle cx="128" cy="50" r="1.4" fill="#ffffff"/><circle cx="116" cy="102" r="1.5" fill="#ffffff"/><circle cx="112" cy="110" r="1.4" fill="#ffffff"/></g>
+        <ellipse cx="70" cy="63" rx="3.8" ry="9" fill="#111111"/><ellipse cx="70" cy="83" rx="2.5" ry="14" fill="#1c1917"/><circle cx="70" cy="53" r="3" fill="#09090b"/>
+        <path d="M69 51 Q61 37 55 35" stroke="#e4e4e7" stroke-width="1.3" fill="none" stroke-linecap="round"/><circle cx="55" cy="35" r="1.5" fill="#e4e4e7"/>
+        <path d="M71 51 Q79 37 85 35" stroke="#e4e4e7" stroke-width="1.3" fill="none" stroke-linecap="round"/><circle cx="85" cy="35" r="1.5" fill="#e4e4e7"/>
+      </svg></div>`;
+  }
+
+  function createSideViewButterfly(sp, size, flipHorizontal) {
+    const id = 'side_' + Math.random().toString(36).substr(2, 9);
+    const scaleX = flipHorizontal ? -1 : 1;
+    const stripes = sp.hasStripes ? '<path d="M52 54 L28 32 M46 58 L20 42 M42 63 L18 52" stroke="#14120e" stroke-width="3" stroke-linecap="round"/>' : '';
+    return `<div class="butterfly-rig" style="transform: scaleX(${scaleX}); filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.78));">
+      <svg width="${size}" height="${size}" viewBox="0 0 120 120" style="overflow: visible;">
+        <defs><linearGradient id="sg_${id}" x1="20%" y1="15%" x2="85%" y2="85%"><stop offset="0%" stop-color="${sp.cInner}"/><stop offset="65%" stop-color="${sp.cMid}"/><stop offset="92%" stop-color="${sp.cBorder}"/></linearGradient></defs>
+        <g class="side-wing-back"><path d="M56 68 C42 36, 16 14, 10 26 C5 37, 16 58, 42 69 Z" fill="${sp.cMid}" stroke="${sp.cBorder}" stroke-width="3.8" opacity="0.88"/><path d="M54 70 C36 68, 16 78, 22 95 C25 102, 32 103, 35 110 C38 104, 46 95, 54 72 Z" fill="${sp.cMid}" stroke="${sp.cBorder}" stroke-width="3.5" opacity="0.88"/></g>
+        <g class="side-wing-front"><path d="M58 70 C44 34, 14 10, 7 24 C2 36, 15 60, 44 71 Z" fill="url(#sg_${id})" stroke="${sp.cBorder}" stroke-width="4.2" stroke-linejoin="round"/><path d="M56 72 C36 70, 14 82, 21 100 C24 108, 32 109, 35 117 C38 110, 48 98, 56 74 Z" fill="url(#sg_${id})" stroke="${sp.cBorder}" stroke-width="4" stroke-linejoin="round"/><path d="M55 69 L15 24 M55 70 L10 36 M54 71 L18 50 M54 74 L24 96 M54 75 L34 105" stroke="${sp.veinColor}" stroke-width="2" stroke-linecap="round"/>${stripes}<circle cx="10" cy="23" r="1.5" fill="#ffffff"/><circle cx="8" cy="31" r="1.4" fill="#ffffff"/><circle cx="11" cy="39" r="1.4" fill="#ffffff"/><circle cx="22" cy="96" r="1.4" fill="#ffffff"/><circle cx="26" cy="103" r="1.3" fill="#ffffff"/></g>
+        <path d="M62 77 L66 88 L71 89 M57 78 L59 89 L64 90" stroke="#18181b" stroke-width="1.8" fill="none" stroke-linecap="round"/><ellipse cx="47" cy="77" rx="12" ry="3.2" transform="rotate(14 47 77)" fill="#1c1917"/><ellipse cx="62" cy="73" rx="7.5" ry="4.2" transform="rotate(-12 62 73)" fill="#111111"/><circle cx="71" cy="69" r="3.6" fill="#09090b"/><circle cx="72" cy="68.5" r="1.3" fill="#3f3f46"/><path d="M73 66 Q84 53 91 52" stroke="#e4e4e7" stroke-width="1.4" fill="none" stroke-linecap="round"/><circle cx="91" cy="52" r="1.5" fill="#e4e4e7"/><path d="M72 65 Q81 50 87 48" stroke="#a1a1aa" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      </svg></div>`;
+  }
+
+  function triggerColorLandingEffect(x, y, sp) {
+    const ring1 = document.createElement('div');
+    ring1.className = 'landing-ring'; ring1.style.left = x + 'px'; ring1.style.top = y + 'px';
+    ring1.style.setProperty('--glow-color', sp.glowColor); ring1.style.setProperty('--glow-light', sp.glowLight);
+    butterflyLayer.appendChild(ring1); setTimeout(() => ring1.remove(), 1500);
+    const ring2 = document.createElement('div');
+    ring2.className = 'landing-ring-2'; ring2.style.left = x + 'px'; ring2.style.top = y + 'px';
+    ring2.style.setProperty('--glow-color', sp.glowColor); ring2.style.setProperty('--glow-light', sp.glowLight);
+    butterflyLayer.appendChild(ring2); setTimeout(() => ring2.remove(), 2000);
+    for (let i = 0; i < 10; i++) {
+      const spark = document.createElement('div');
+      spark.className = 'landing-spark'; spark.style.left = x + 'px'; spark.style.top = y + 'px';
+      spark.style.setProperty('--glow-color', sp.glowColor); spark.style.setProperty('--glow-light', sp.glowLight);
+      const angle = (Math.PI * 2 * i) / 10 + (Math.random() * 0.4);
+      const dist = 28 + Math.random() * 36;
+      spark.style.setProperty('--dx', Math.cos(angle) * dist + 'px'); spark.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+      butterflyLayer.appendChild(spark); setTimeout(() => spark.remove(), 1350);
+    }
+  }
+
+  function getRandomEdgePoint(excludeSide = -1) {
+    const W = window.innerWidth, H = window.innerHeight;
+    let side; do { side = Math.floor(Math.random() * 4); } while (side === excludeSide);
+    if (side === 0) return { x: -100, y: Math.random() * H, side };
+    if (side === 1) return { x: W + 100, y: Math.random() * H, side };
+    if (side === 2) return { x: Math.random() * W, y: -100, side };
+    return { x: Math.random() * W, y: H + 100, side };
+  }
+
+  function getRandomPerchSpot(size) {
+    const targets = [
+      document.getElementById('bypassBtn'), document.getElementById('target-label'),
+      document.getElementById('target-paste'), document.getElementById('target-reset'),
+      document.getElementById('inputLyrics'), document.getElementById('copyBtn')
+    ].filter(el => el && el.offsetParent !== null);
+    const chosen = targets[Math.floor(Math.random() * targets.length)];
+    const rect = chosen.getBoundingClientRect();
+    return { x: rect.left + (Math.random() * 0.65 + 0.15) * rect.width - size / 2, y: rect.top + rect.height - size * 0.52 };
+  }
+
+  let activeButterflies = 0;
+  function launchSmartButterfly(shouldLand = true) {
+    if (activeButterflies >= 3) return;
+    activeButterflies++;
+    const sp = speciesList[Math.floor(Math.random() * speciesList.length)];
+    const sizes = [52, 62, 70, 78];
+    const size = sizes[Math.floor(Math.random() * sizes.length)];
+    const isSideView = Math.random() < 0.52;
+    const startPt = getRandomEdgePoint();
+    let curX = startPt.x, curY = startPt.y;
+    let state = shouldLand ? 'wandering_to_land' : 'passing_through';
+    let targetPt = shouldLand ? getRandomPerchSpot(size) : getRandomEdgePoint(startPt.side);
+    const flipSide = targetPt.x < curX;
+    const el = document.createElement('div');
+    el.className = 'butterfly-3d flying';
+    el.innerHTML = isSideView ? createSideViewButterfly(sp, size, flipSide) : createTopViewButterfly(sp, size, 25 + Math.floor(Math.random() * 25));
+    butterflyLayer.appendChild(el);
+    let curAngle = isSideView ? 0 : Math.random() * 360;
+    let midPt = { x: window.innerWidth * (0.2 + Math.random() * 0.6), y: window.innerHeight * (0.15 + Math.random() * 0.7) };
+    let passedMid = false, perchTimer = 0, nextTriggered = false, wanderNoiseSeed = Math.random() * 100;
+
+    function step(now) {
+      wanderNoiseSeed += 0.022;
+      if (state === 'perched') {
+        const idleBreath = Math.sin(wanderNoiseSeed * 1.4) * 1.8;
+        el.style.transform = isSideView ? `translate3d(${curX}px, ${curY + idleBreath}px, 0)` : `translate3d(${curX}px, ${curY + idleBreath}px, 0) rotateZ(${curAngle}deg)`;
+        if (now - perchTimer > 3400 + Math.random() * 1800) {
+          state = 'leaving'; el.classList.remove('perched'); el.classList.add('flying'); targetPt = getRandomEdgePoint();
+        }
+        requestAnimationFrame(step); return;
+      }
+      const activeTarget = (!passedMid && state !== 'leaving') ? midPt : targetPt;
+      const dx = activeTarget.x - curX, dy = activeTarget.y - curY, dist = Math.hypot(dx, dy);
+      if (!passedMid && state !== 'leaving' && dist < 75) passedMid = true;
+      if (state === 'wandering_to_land' && passedMid && dist < 12) {
+        state = 'perched'; el.classList.remove('flying'); el.classList.add('perched'); perchTimer = now;
+        triggerColorLandingEffect(curX + size * 0.5, curY + size * 0.65, sp);
+        if (!nextTriggered) {
+          nextTriggered = true;
+          const spawnTwoTogether = Math.random() < 0.30;
+          setTimeout(() => launchSmartButterfly(true), 450);
+          if (spawnTwoTogether && activeButterflies < 2) setTimeout(() => launchSmartButterfly(false), 950);
+        }
+        requestAnimationFrame(step); return;
+      }
+      if ((state === 'leaving' || state === 'passing_through') && passedMid && dist < 45) {
+        el.remove(); activeButterflies = Math.max(0, activeButterflies - 1);
+        if (activeButterflies === 0) setTimeout(() => launchSmartButterfly(true), 700);
+        return;
+      }
+      const speed = (state === 'wandering_to_land' && passedMid && dist < 100) ? 0.72 : 1.15;
+      if (isSideView) {
+        const dirX = dx / (dist || 1), dirY = dy / (dist || 1), verticalBob = Math.sin(wanderNoiseSeed * 1.8) * 0.65;
+        curX += dirX * speed; curY += dirY * speed + verticalBob;
+        el.style.transform = `translate3d(${curX}px, ${curY}px, 0) rotateZ(${dirY * 14 + verticalBob * 8}deg)`;
+      } else {
+        const desiredAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+        const weave = Math.sin(wanderNoiseSeed) * 24;
+        const targetAngleWithWeave = desiredAngle + (dist > 60 ? weave : 0);
+        let angleDiff = ((targetAngleWithWeave - curAngle + 540) % 360) - 180;
+        curAngle += angleDiff * 0.045;
+        const rad = (curAngle - 90) * (Math.PI / 180);
+        curX += Math.cos(rad) * speed; curY += Math.sin(rad) * speed;
+        const bankAngle = Math.max(-24, Math.min(24, angleDiff * 1.3));
+        el.style.transform = `translate3d(${curX}px, ${curY}px, 0) rotateZ(${curAngle}deg) rotateY(${bankAngle}deg)`;
+      }
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  window.addEventListener('DOMContentLoaded', () => setTimeout(() => launchSmartButterfly(true), 500));
+
+  function resetBypassBtn() {
+    const btn = document.getElementById('bypassBtn');
+    btn.classList.remove('done-grey'); btn.innerText = " ⚡ Bypass Lyrics ";
+  }
   function processLyrics() {
     const input = document.getElementById('inputLyrics').value;
     const statusEl = document.getElementById('statusText');
     const btn = document.getElementById('bypassBtn');
     const resultBox = document.getElementById('resultSection');
     const copyBtn = document.getElementById('copyBtn');
-
     if (!input.trim()) {
-      statusEl.style.color = '#f43f5e';
-      statusEl.innerText = "⚠️ Pehle upar box mein lyrics daalein!";
-      return;
+      statusEl.style.color = '#f43f5e'; statusEl.innerText = "⚠️ Pehle upar box mein lyrics daalein!"; return;
     }
-
-    btn.disabled = true;
-    btn.classList.remove('done-grey');
-    btn.innerText = "⏳ Processing...";
-    statusEl.style.color = '#fde047';
-    statusEl.innerText = "Har letter ke beech invisible character add ho raha hai...";
-
+    btn.disabled = true; btn.classList.remove('done-grey'); btn.innerText = "⏳ Processing...";
+    statusEl.style.color = '#fde047'; statusEl.innerText = "Har letter ke beech invisible character add ho raha hai...";
     setTimeout(() => {
-      const inv = '\u200C\u2060'; 
-      
+      const inv = '\u200C\u2060';
       const bypassed = input.split('\n').map(line => {
         const trimmed = line.trim();
-        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-          return line;
-        }
-        return line.split(' ').map(word => {
-          if (word.length <= 1) return word;
-          return word.split('').join(inv);
-        }).join(' ');
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) return line;
+        return line.split(' ').map(word => word.length <= 1 ? word : word.split('').join(inv)).join(' ');
       }).join('\n');
-
       document.getElementById('outputLyrics').value = bypassed;
       document.getElementById('charCount').innerText = bypassed.length + " chars";
-      
-      copyBtn.classList.remove('done-grey');
-      copyBtn.innerText = "📋 Copy Lyrics";
-
+      copyBtn.classList.remove('done-grey'); copyBtn.innerText = "📋 Copy Lyrics";
       resultBox.style.display = "block";
-      
-      btn.disabled = false;
-      void btn.offsetWidth;
-      btn.classList.add('done-grey');
-      btn.innerText = "✅ Done!";
-
-      statusEl.style.color = '#facc15';
-      statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
+      btn.disabled = false; void btn.offsetWidth; btn.classList.add('done-grey'); btn.innerText = "✅ Done!";
+      statusEl.style.color = '#facc15'; statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
     }, 450);
   }
-
   async function pasteLyrics() {
     try {
       const text = await navigator.clipboard.readText();
@@ -257,28 +386,17 @@
       resetBypassBtn();
       document.getElementById('statusText').style.color = '#fde047';
       document.getElementById('statusText').innerText = "📥 Lyrics paste ho gaye!";
-    } catch (err) {
-      alert("Box mein ungli dabakar Paste karein.");
-    }
+    } catch (err) { alert("Box mein ungli dabakar Paste karein."); }
   }
-
   function copyLyrics() {
     const output = document.getElementById('outputLyrics');
     const statusEl = document.getElementById('statusText');
     const copyBtn = document.getElementById('copyBtn');
-
-    output.select();
-    navigator.clipboard.writeText(output.value);
-
-    copyBtn.classList.remove('done-grey');
-    void copyBtn.offsetWidth;
-    copyBtn.classList.add('done-grey');
-    copyBtn.innerText = "✅ Copied!";
-
-    statusEl.style.color = '#fde047';
-    statusEl.innerText = "🎉 Copied! Ab seedha Suno mein paste kar dein.";
+    output.select(); navigator.clipboard.writeText(output.value);
+    copyBtn.classList.remove('done-grey'); void copyBtn.offsetWidth;
+    copyBtn.classList.add('done-grey'); copyBtn.innerText = "✅ Copied!";
+    statusEl.style.color = '#fde047'; statusEl.innerText = "🎉 Copied! Ab seedha Suno mein paste kar dein.";
   }
-
   function clearAll() {
     const copyBtn = document.getElementById('copyBtn');
     document.getElementById('inputLyrics').value = '';
@@ -286,10 +404,8 @@
     document.getElementById('resultSection').style.display = 'none';
     document.getElementById('statusText').innerText = '';
     resetBypassBtn();
-    copyBtn.classList.remove('done-grey');
-    copyBtn.innerText = "📋 Copy Lyrics";
+    copyBtn.classList.remove('done-grey'); copyBtn.innerText = "📋 Copy Lyrics";
   }
 </script>
-
 </body>
 </html>
