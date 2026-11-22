@@ -353,50 +353,155 @@
     const btn = document.getElementById('bypassBtn');
     btn.classList.remove('done-grey'); btn.innerText = " ⚡ Bypass Lyrics ";
   }
+
   function processLyrics() {
     const input = document.getElementById('inputLyrics').value;
     const statusEl = document.getElementById('statusText');
     const btn = document.getElementById('bypassBtn');
     const resultBox = document.getElementById('resultSection');
     const copyBtn = document.getElementById('copyBtn');
+
     if (!input.trim()) {
-      statusEl.style.color = '#f43f5e'; statusEl.innerText = "⚠️ Pehle upar box mein lyrics daalein!"; return;
+      statusEl.style.color = '#f43f5e';
+      statusEl.innerText = "⚠️ Pehle upar box mein lyrics daalein!";
+      return;
     }
-    btn.disabled = true; btn.classList.remove('done-grey'); btn.innerText = "⏳ Processing...";
-    statusEl.style.color = '#fde047'; statusEl.innerText = "Har letter ke beech invisible character add ho raha hai...";
+
+    btn.disabled = true;
+    btn.classList.remove('done-grey');
+    btn.innerText = "⏳ Processing...";
+    statusEl.style.color = '#fde047';
+    statusEl.innerText = "Har letter ke beech invisible character add ho raha hai...";
+
     setTimeout(() => {
       const inv = '\u200C\u2060';
+      const segmenter = (typeof Intl !== 'undefined' && Intl.Segmenter)
+        ? new Intl.Segmenter('or', { granularity: 'grapheme' })
+        : null;
+
       const bypassed = input.split('\n').map(line => {
         const trimmed = line.trim();
         if (trimmed.startsWith('[') && trimmed.endsWith(']')) return line;
-        return line.split(' ').map(word => word.length <= 1 ? word : word.split('').join(inv)).join(' ');
+        return line.split(' ').map(word => {
+          let graphemes;
+          if (segmenter) {
+            graphemes = Array.from(segmenter.segment(word), s => s.segment);
+          } else {
+            graphemes = Array.from(word);
+          }
+          if (graphemes.length <= 1) return word;
+          return graphemes.join(inv);
+        }).join(' ');
       }).join('\n');
+
       document.getElementById('outputLyrics').value = bypassed;
       document.getElementById('charCount').innerText = bypassed.length + " chars";
-      copyBtn.classList.remove('done-grey'); copyBtn.innerText = "📋 Copy Lyrics";
+      copyBtn.classList.remove('done-grey');
+      copyBtn.innerText = "📋 Copy Lyrics";
       resultBox.style.display = "block";
-      btn.disabled = false; void btn.offsetWidth; btn.classList.add('done-grey'); btn.innerText = "✅ Done!";
-      statusEl.style.color = '#facc15'; statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
-    }, 450);
+      btn.disabled = false;
+      void btn.offsetWidth;
+      btn.classList.add('done-grey');
+      btn.innerText = "✅ Done!";
+      statusEl.style.color = '#facc15';
+      statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
+    }, 350);
   }
+
+  /* ================= 1-CLICK PASTE + AUTO-BYPASS ================= */
   async function pasteLyrics() {
-    try {
-      const text = await navigator.clipboard.readText();
-      document.getElementById('inputLyrics').value = text;
+    const inputBox = document.getElementById('inputLyrics');
+    const statusEl = document.getElementById('statusText');
+
+    function handlePastedText(text) {
+      if (!text || !text.trim()) {
+        statusEl.style.color = '#f43f5e';
+        statusEl.innerText = "⚠️ Clipboard khali hai! Pehle kahin se lyrics copy karein.";
+        return;
+      }
+      inputBox.value = text;
       resetBypassBtn();
-      document.getElementById('statusText').style.color = '#fde047';
-      document.getElementById('statusText').innerText = "📥 Lyrics paste ho gaye!";
-    } catch (err) { alert("Box mein ungli dabakar Paste karein."); }
+      statusEl.style.color = '#fde047';
+      statusEl.innerText = "📥 Lyrics paste ho gaye! Automatic bypass ho raha hai...";
+      processLyrics();
+    }
+
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      try {
+        const text = await navigator.clipboard.readText();
+        handlePastedText(text);
+        return;
+      } catch (err) {}
+    }
+
+    // Fallback: Mobile browsers jo direct clipboard read block karte hain
+    try {
+      inputBox.value = '';
+      inputBox.focus();
+      const pasted = document.execCommand('paste');
+      setTimeout(() => {
+        if (inputBox.value.trim()) {
+          handlePastedText(inputBox.value);
+        } else {
+          statusEl.style.color = '#f43f5e';
+          statusEl.innerText = "⚠️ Browser ne permission roki hai: Box mein ungli dabakar Paste karein.";
+        }
+      }, 100);
+    } catch (e) {
+      inputBox.focus();
+      statusEl.style.color = '#f43f5e';
+      statusEl.innerText = "⚠️ Box mein ungli dabakar Paste karein.";
+    }
   }
+
+  /* ================= 100% WORKING MOBILE + DESKTOP COPY FUNCTION ================= */
   function copyLyrics() {
     const output = document.getElementById('outputLyrics');
     const statusEl = document.getElementById('statusText');
     const copyBtn = document.getElementById('copyBtn');
-    output.select(); navigator.clipboard.writeText(output.value);
-    copyBtn.classList.remove('done-grey'); void copyBtn.offsetWidth;
-    copyBtn.classList.add('done-grey'); copyBtn.innerText = "✅ Copied!";
-    statusEl.style.color = '#fde047'; statusEl.innerText = "🎉 Copied! Ab seedha Suno mein paste kar dein.";
+    const textToCopy = output.value;
+
+    if (!textToCopy) return;
+
+    function markCopiedSuccess() {
+      copyBtn.classList.remove('done-grey');
+      void copyBtn.offsetWidth;
+      copyBtn.classList.add('done-grey');
+      copyBtn.innerText = "✅ Copied!";
+      statusEl.style.color = '#fde047';
+      statusEl.innerText = "🎉 Copied! Ab seedha Suno mein paste kar dein.";
+    }
+
+    function fallbackCopy() {
+      try {
+        output.removeAttribute('readonly');
+        output.focus();
+        output.select();
+        output.setSelectionRange(0, 999999);
+        const ok = document.execCommand('copy');
+        output.setAttribute('readonly', true);
+        if (ok) {
+          markCopiedSuccess();
+        } else {
+          statusEl.style.color = '#f43f5e';
+          statusEl.innerText = "⚠️ Box mein ungli dabakar Select All -> Copy karein.";
+        }
+      } catch (e) {
+        output.setAttribute('readonly', true);
+        statusEl.style.color = '#f43f5e';
+        statusEl.innerText = "⚠️ Box mein ungli dabakar Select All -> Copy karein.";
+      }
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy)
+        .then(markCopiedSuccess)
+        .catch(fallbackCopy);
+    } else {
+      fallbackCopy();
+    }
   }
+
   function clearAll() {
     const copyBtn = document.getElementById('copyBtn');
     document.getElementById('inputLyrics').value = '';
@@ -404,7 +509,8 @@
     document.getElementById('resultSection').style.display = 'none';
     document.getElementById('statusText').innerText = '';
     resetBypassBtn();
-    copyBtn.classList.remove('done-grey'); copyBtn.innerText = "📋 Copy Lyrics";
+    copyBtn.classList.remove('done-grey');
+    copyBtn.innerText = "📋 Copy Lyrics";
   }
 </script>
 </body>
