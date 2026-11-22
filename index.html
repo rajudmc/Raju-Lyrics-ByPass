@@ -6,19 +6,25 @@
   <title>Raju Lyrics ByPass</title>
   <style>
     :root {
-      --theme-bg-top: #292008;
-      --theme-accent: #facc15;
-      --theme-accent-2: #f59e0b;
+      --theme-bg-left: #292008;
+      --theme-bg-right: #292008;
+      --theme-accent-left: #facc15;
+      --theme-accent-right: #f59e0b;
       --theme-light: #fef08a;
-      --theme-border: rgba(250, 204, 21, 0.35);
-      --theme-border-soft: rgba(250, 204, 21, 0.22);
-      --theme-glow: rgba(250, 204, 21, 0.14);
+      --theme-border-left: rgba(250, 204, 21, 0.38);
+      --theme-border-right: rgba(250, 204, 21, 0.38);
+      --theme-border-soft: rgba(250, 204, 21, 0.24);
+      --theme-glow-left: rgba(250, 204, 21, 0.16);
+      --theme-glow-right: rgba(250, 204, 21, 0.16);
       --theme-btn-bg: #2e291d;
     }
 
     * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     body {
-      background: radial-gradient(circle at top, var(--theme-bg-top) 0%, #09090b 100%);
+      background:
+        radial-gradient(circle at 22% 22%, var(--theme-bg-left) 0%, transparent 62%),
+        radial-gradient(circle at 78% 22%, var(--theme-bg-right) 0%, transparent 62%),
+        #09090b;
       color: #fefce8;
       margin: 0;
       padding: 20px 15px;
@@ -79,7 +85,7 @@
     @keyframes sparkFly { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; } }
     .touch-ripple {
       position: absolute; width: 16px; height: 16px; border-radius: 50%;
-      border: 2px solid var(--theme-accent); box-shadow: 0 0 14px var(--theme-accent-2), inset 0 0 8px var(--theme-light);
+      border: 2px solid var(--theme-accent-left); box-shadow: 0 0 14px var(--theme-accent-right), inset 0 0 8px var(--theme-light);
       transform: translate(-50%, -50%) scale(0.2); pointer-events: none;
       animation: touchWave 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -94,7 +100,7 @@
     .header { text-align: center; margin-bottom: 22px; position: relative; z-index: 10; }
     .header h1 {
       font-size: 28px; margin: 0 0 6px 0;
-      background: linear-gradient(90deg, var(--theme-accent-2), var(--theme-light), #ffffff, var(--theme-accent), var(--theme-accent-2));
+      background: linear-gradient(90deg, var(--theme-accent-left), var(--theme-light), #ffffff, var(--theme-accent-right), var(--theme-accent-left));
       background-size: 250% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       font-weight: 800; animation: textLoopShine 3s linear infinite, floatPulse 2.5s ease-in-out infinite;
     }
@@ -102,9 +108,18 @@
     @keyframes floatPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
     .header p { color: #a1a1aa; margin: 0; font-size: 13px; }
     .card {
-      position: relative; z-index: 2; background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(10px);
-      border: 1px solid var(--theme-border); border-radius: 16px; padding: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 24px var(--theme-glow);
+      position: relative; z-index: 2;
+      background: linear-gradient(90deg, rgba(24, 24, 27, 0.86) 0%, rgba(24, 24, 27, 0.86) 100%);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--theme-border-left);
+      border-left: 1px solid var(--theme-border-left);
+      border-right: 1px solid var(--theme-border-right);
+      border-bottom: 1px solid var(--theme-border-right);
+      border-radius: 16px; padding: 20px;
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.65),
+        -12px 0 28px var(--theme-glow-left),
+        12px 0 28px var(--theme-glow-right);
       transition: border-color 1s ease, box-shadow 1s ease;
     }
     .label-row, textarea, button, #resultSection, .status-bar { position: relative; z-index: 10; }
@@ -115,11 +130,15 @@
     }
     textarea {
       width: 100%; height: 150px; background-color: rgba(9, 9, 11, 0.78); color: #fefce8;
-      border: 1px solid var(--theme-border-soft); border-radius: 12px; padding: 14px;
+      border-top: 1px solid var(--theme-border-left);
+      border-left: 1px solid var(--theme-border-left);
+      border-right: 1px solid var(--theme-border-right);
+      border-bottom: 1px solid var(--theme-border-right);
+      border-radius: 12px; padding: 14px;
       font-size: 15px; line-height: 1.5; resize: vertical; margin-bottom: 14px;
       transition: border-color 1s ease, box-shadow 1s ease;
     }
-    textarea:focus { outline: none; border-color: var(--theme-accent); box-shadow: 0 0 0 3px var(--theme-glow); }
+    textarea:focus { outline: none; border-color: var(--theme-accent-left); box-shadow: 0 0 0 3px var(--theme-glow-left); }
     button {
       width: 100%; border: none; padding: 14px 18px; border-radius: 12px; cursor: pointer;
       font-size: 15px; font-weight: 700; transition: all 0.25s ease;
@@ -137,12 +156,12 @@
     }
     #resultSection {
       display: none; margin-top: 20px; padding-top: 18px;
-      border-top: 1px dashed var(--theme-border); animation: fadeIn 0.35s ease;
+      border-top: 1px dashed var(--theme-border-left); animation: fadeIn 0.35s ease;
       transition: border-color 1s ease;
     }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     .status-bar {
-      text-align: center; font-size: 13px; color: var(--theme-accent);
+      text-align: center; font-size: 13px; color: var(--theme-accent-left);
       min-height: 18px; margin-top: 12px; font-weight: 500;
       transition: color 1s ease;
     }
@@ -177,7 +196,7 @@
     <div id="resultSection">
       <div class="label-row">
         <span>✅ Bypassed Lyrics Ready</span>
-        <span id="charCount" style="color:var(--theme-accent); font-size:12px;">0 chars</span>
+        <span id="charCount" style="color:var(--theme-accent-right); font-size:12px;">0 chars</span>
       </div>
       
       <textarea id="outputLyrics" readonly></textarea>
@@ -239,13 +258,12 @@
       cInner: '#ff9e00', cMid: '#ff5400', cBorder: '#111111', veinColor: '#111111',
       glowColor: '#ff7b00', glowLight: '#ffe066',
       theme: {
-        bgTop: '#2e1505',
+        bgTop: '#331704',
         accent: '#ff7b00',
-        accent2: '#ea580c',
         light: '#fed7aa',
-        border: 'rgba(255, 123, 0, 0.38)',
-        borderSoft: 'rgba(255, 123, 0, 0.24)',
-        glow: 'rgba(255, 123, 0, 0.16)',
+        border: 'rgba(255, 123, 0, 0.42)',
+        borderSoft: 'rgba(255, 123, 0, 0.25)',
+        glow: 'rgba(255, 123, 0, 0.18)',
         btnBg: '#2e1e12'
       },
       hasStripes: false
@@ -255,13 +273,12 @@
       cInner: '#38bdf8', cMid: '#0284c7', cBorder: '#090d16', veinColor: '#0c243c',
       glowColor: '#0ea5e9', glowLight: '#bae6fd',
       theme: {
-        bgTop: '#072236',
+        bgTop: '#06263d',
         accent: '#38bdf8',
-        accent2: '#0284c7',
         light: '#bae6fd',
-        border: 'rgba(56, 189, 248, 0.38)',
-        borderSoft: 'rgba(56, 189, 248, 0.24)',
-        glow: 'rgba(14, 165, 233, 0.16)',
+        border: 'rgba(56, 189, 248, 0.42)',
+        borderSoft: 'rgba(56, 189, 248, 0.25)',
+        glow: 'rgba(14, 165, 233, 0.18)',
         btnBg: '#122636'
       },
       hasStripes: false
@@ -271,13 +288,12 @@
       cInner: '#fef08a', cMid: '#eab308', cBorder: '#14120e', veinColor: '#14120e',
       glowColor: '#eab308', glowLight: '#fef9c3',
       theme: {
-        bgTop: '#292008',
+        bgTop: '#2e2407',
         accent: '#facc15',
-        accent2: '#f59e0b',
         light: '#fef08a',
-        border: 'rgba(250, 204, 21, 0.35)',
-        borderSoft: 'rgba(250, 204, 21, 0.22)',
-        glow: 'rgba(250, 204, 21, 0.14)',
+        border: 'rgba(250, 204, 21, 0.40)',
+        borderSoft: 'rgba(250, 204, 21, 0.24)',
+        glow: 'rgba(250, 204, 21, 0.16)',
         btnBg: '#2e291d'
       },
       hasStripes: true
@@ -287,31 +303,61 @@
       cInner: '#f472b6', cMid: '#db2777', cBorder: '#1a0912', veinColor: '#2e091b',
       glowColor: '#ec4899', glowLight: '#fbcfe8',
       theme: {
-        bgTop: '#310b20',
+        bgTop: '#360a22',
         accent: '#f472b6',
-        accent2: '#db2777',
         light: '#fbcfe8',
-        border: 'rgba(244, 114, 182, 0.38)',
-        borderSoft: 'rgba(244, 114, 182, 0.24)',
-        glow: 'rgba(236, 72, 153, 0.16)',
+        border: 'rgba(244, 114, 182, 0.42)',
+        borderSoft: 'rgba(244, 114, 182, 0.25)',
+        glow: 'rgba(236, 72, 153, 0.18)',
         btnBg: '#311726'
       },
       hasStripes: false
     }
   ];
 
-  // पूरी वेबसाइट का थीम कलर तितली के रंग के हिसाब से बदलने वाला फंक्शन
-  function applyButterflyTheme(sp) {
-    if (!sp || !sp.theme) return;
+  // सक्रिय तितलियों की स्थिति के अनुसार Left और Right दोनों साइड का अलग-अलग थीम अपडेट करना
+  const liveButterflies = [];
+  let lastThemeUpdate = 0;
+
+  function syncDualSideThemes(now) {
+    if (now - lastThemeUpdate < 180) return;
+    lastThemeUpdate = now;
+    if (liveButterflies.length === 0) return;
+
     const root = document.documentElement.style;
-    root.setProperty('--theme-bg-top', sp.theme.bgTop);
-    root.setProperty('--theme-accent', sp.theme.accent);
-    root.setProperty('--theme-accent-2', sp.theme.accent2);
-    root.setProperty('--theme-light', sp.theme.light);
-    root.setProperty('--theme-border', sp.theme.border);
-    root.setProperty('--theme-border-soft', sp.theme.borderSoft);
-    root.setProperty('--theme-glow', sp.theme.glow);
-    root.setProperty('--theme-btn-bg', sp.theme.btnBg);
+    const midX = window.innerWidth * 0.5;
+
+    if (liveButterflies.length === 1) {
+      const t = liveButterflies[0].sp.theme;
+      root.setProperty('--theme-bg-left', t.bgTop);
+      root.setProperty('--theme-bg-right', t.bgTop);
+      root.setProperty('--theme-accent-left', t.accent);
+      root.setProperty('--theme-accent-right', t.accent);
+      root.setProperty('--theme-light', t.light);
+      root.setProperty('--theme-border-left', t.border);
+      root.setProperty('--theme-border-right', t.border);
+      root.setProperty('--theme-border-soft', t.borderSoft);
+      root.setProperty('--theme-glow-left', t.glow);
+      root.setProperty('--theme-glow-right', t.glow);
+      root.setProperty('--theme-btn-bg', t.btnBg);
+    } else {
+      // तितलियों को X पोजीशन से सॉर्ट करें: बाईं वाली Left थीम और दाईं वाली Right थीम संभालेगी
+      const sorted = [...liveButterflies].sort((a, b) => a.x - b.x);
+      const leftSp = sorted[0].sp.theme;
+      const rightSp = sorted[sorted.length - 1].sp.theme;
+
+      root.setProperty('--theme-bg-left', leftSp.bgTop);
+      root.setProperty('--theme-bg-right', rightSp.bgTop);
+      root.setProperty('--theme-accent-left', leftSp.accent);
+      root.setProperty('--theme-accent-right', rightSp.accent);
+      root.setProperty('--theme-light', leftSp.light);
+      root.setProperty('--theme-border-left', leftSp.border);
+      root.setProperty('--theme-border-right', rightSp.border);
+      root.setProperty('--theme-border-soft', leftSp.borderSoft);
+      root.setProperty('--theme-glow-left', leftSp.glow);
+      root.setProperty('--theme-glow-right', rightSp.glow);
+      root.setProperty('--theme-btn-bg', leftSp.btnBg);
+    }
   }
 
   function createTopViewButterfly(sp, size, tiltDeg) {
@@ -371,7 +417,7 @@
     return { x: Math.random() * W, y: H + 100, side };
   }
 
-  function getRandomPerchSpot(size) {
+  function getRandomPerchSpot(size, preferSide = null) {
     const targets = [
       document.getElementById('bypassBtn'), document.getElementById('target-label'),
       document.getElementById('target-paste'), document.getElementById('target-reset'),
@@ -379,17 +425,25 @@
     ].filter(el => el && el.offsetParent !== null);
     const chosen = targets[Math.floor(Math.random() * targets.length)];
     const rect = chosen.getBoundingClientRect();
-    return { x: rect.left + (Math.random() * 0.65 + 0.15) * rect.width - size / 2, y: rect.top + rect.height - size * 0.52 };
+
+    // अगर दो तितलियाँ एक साथ हैं, तो एक बाईं ओर और दूसरी दाईं ओर बैठेगी
+    let ratio = Math.random() * 0.65 + 0.15;
+    if (preferSide === 'left') ratio = 0.08 + Math.random() * 0.25;
+    if (preferSide === 'right') ratio = 0.65 + Math.random() * 0.25;
+
+    return { x: rect.left + ratio * rect.width - size / 2, y: rect.top + rect.height - size * 0.52 };
   }
 
   let activeButterflies = 0;
-  function launchSmartButterfly(shouldLand = true) {
+  function launchSmartButterfly(shouldLand = true, preferSide = null) {
     if (activeButterflies >= 3) return;
     activeButterflies++;
-    const sp = speciesList[Math.floor(Math.random() * speciesList.length)];
-    if (shouldLand) {
-      applyButterflyTheme(sp);
-    }
+
+    // कोशिश करें कि नई तितली का रंग पहले से मौजूद तितली से अलग हो ताकि दोनों साइड अलग-अलग थीम दिखे
+    const usedNames = liveButterflies.map(b => b.sp.name);
+    const distinctSpecies = speciesList.filter(s => !usedNames.includes(s.name));
+    const pool = distinctSpecies.length > 0 ? distinctSpecies : speciesList;
+    const sp = pool[Math.floor(Math.random() * pool.length)];
 
     const sizes = [52, 62, 70, 78];
     const size = sizes[Math.floor(Math.random() * sizes.length)];
@@ -397,8 +451,12 @@
     const startPt = getRandomEdgePoint();
     let curX = startPt.x, curY = startPt.y;
     let state = shouldLand ? 'wandering_to_land' : 'passing_through';
-    let targetPt = shouldLand ? getRandomPerchSpot(size) : getRandomEdgePoint(startPt.side);
+    let targetPt = shouldLand ? getRandomPerchSpot(size, preferSide) : getRandomEdgePoint(startPt.side);
     const flipSide = targetPt.x < curX;
+
+    const tracker = { sp: sp, x: curX };
+    liveButterflies.push(tracker);
+    syncDualSideThemes(performance.now());
 
     const el = document.createElement('div');
     el.className = 'butterfly-3d flying';
@@ -406,15 +464,25 @@
     butterflyLayer.appendChild(el);
 
     let curAngle = isSideView ? 0 : Math.random() * 360;
-    let midPt = { x: window.innerWidth * (0.2 + Math.random() * 0.6), y: window.innerHeight * (0.15 + Math.random() * 0.7) };
+    let midXRatio = preferSide === 'left' ? (0.15 + Math.random() * 0.25) : (preferSide === 'right' ? (0.60 + Math.random() * 0.25) : (0.2 + Math.random() * 0.6));
+    let midPt = { x: window.innerWidth * midXRatio, y: window.innerHeight * (0.15 + Math.random() * 0.7) };
     let passedMid = false, perchTimer = 0, nextTriggered = false, wanderNoiseSeed = Math.random() * 100;
+
+    function removeTracker() {
+      const idx = liveButterflies.indexOf(tracker);
+      if (idx !== -1) liveButterflies.splice(idx, 1);
+      syncDualSideThemes(performance.now());
+    }
 
     function step(now) {
       wanderNoiseSeed += 0.022;
+      tracker.x = curX + size * 0.5;
+      syncDualSideThemes(now);
+
       if (state === 'perched') {
         const idleBreath = Math.sin(wanderNoiseSeed * 1.4) * 1.8;
         el.style.transform = isSideView ? `translate3d(${curX}px, ${curY + idleBreath}px, 0)` : `translate3d(${curX}px, ${curY + idleBreath}px, 0) rotateZ(${curAngle}deg)`;
-        if (now - perchTimer > 3400 + Math.random() * 1800) {
+        if (now - perchTimer > 3600 + Math.random() * 1800) {
           state = 'leaving'; el.classList.remove('perched'); el.classList.add('flying'); targetPt = getRandomEdgePoint();
         }
         requestAnimationFrame(step); return;
@@ -424,20 +492,25 @@
       if (!passedMid && state !== 'leaving' && dist < 75) passedMid = true;
       if (state === 'wandering_to_land' && passedMid && dist < 12) {
         state = 'perched'; el.classList.remove('flying'); el.classList.add('perched'); perchTimer = now;
-        applyButterflyTheme(sp);
         triggerColorLandingEffect(curX + size * 0.5, curY + size * 0.65, sp);
         if (!nextTriggered) {
           nextTriggered = true;
-          const spawnTwoTogether = Math.random() < 0.30;
-          setTimeout(() => launchSmartButterfly(true), 450);
-          if (spawnTwoTogether && activeButterflies < 2) setTimeout(() => launchSmartButterfly(false), 950);
+          // 55% चांस कि दूसरी तितली भी साथ आए ताकि दोनों साइड का अलग-अलग थीम दिखे
+          const spawnPair = Math.random() < 0.55;
+          const mySide = (curX + size * 0.5) < window.innerWidth * 0.5 ? 'left' : 'right';
+          const otherSide = mySide === 'left' ? 'right' : 'left';
+          setTimeout(() => launchSmartButterfly(true, otherSide), 450);
+          if (spawnPair && activeButterflies < 2) {
+            setTimeout(() => launchSmartButterfly(true, mySide), 850);
+          }
         }
         requestAnimationFrame(step); return;
       }
       if ((state === 'leaving' || state === 'passing_through') && passedMid && dist < 45) {
         el.remove();
+        removeTracker();
         activeButterflies = Math.max(0, activeButterflies - 1);
-        if (activeButterflies === 0) setTimeout(() => launchSmartButterfly(true), 700);
+        if (activeButterflies === 0) setTimeout(() => launchSmartButterfly(true, 'left'), 600);
         return;
       }
       const speed = (state === 'wandering_to_land' && passedMid && dist < 100) ? 0.72 : 1.15;
@@ -460,7 +533,12 @@
     }
     requestAnimationFrame(step);
   }
-  window.addEventListener('DOMContentLoaded', () => setTimeout(() => launchSmartButterfly(true), 500));
+
+  // शुरुआत में ही दोनों साइड के लिए दो अलग-अलग रंगों की तितलियाँ लॉन्च करें
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => launchSmartButterfly(true, 'left'), 400);
+    setTimeout(() => launchSmartButterfly(true, 'right'), 900);
+  });
 
   function resetBypassBtn() {
     const btn = document.getElementById('bypassBtn');
@@ -516,7 +594,7 @@
       void btn.offsetWidth;
       btn.classList.add('done-grey');
       btn.innerText = "✅ Done!";
-      statusEl.style.color = 'var(--theme-accent)';
+      statusEl.style.color = 'var(--theme-accent-left)';
       statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
     }, 350);
   }
