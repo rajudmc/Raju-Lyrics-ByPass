@@ -5,9 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Raju Lyrics ByPass</title>
   <style>
+    :root {
+      --theme-bg-top: #292008;
+      --theme-accent: #facc15;
+      --theme-accent-2: #f59e0b;
+      --theme-light: #fef08a;
+      --theme-border: rgba(250, 204, 21, 0.35);
+      --theme-border-soft: rgba(250, 204, 21, 0.22);
+      --theme-glow: rgba(250, 204, 21, 0.14);
+      --theme-btn-bg: #2e291d;
+    }
+
     * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
     body {
-      background: radial-gradient(circle at top, #292008 0%, #09090b 100%);
+      background: radial-gradient(circle at top, var(--theme-bg-top) 0%, #09090b 100%);
       color: #fefce8;
       margin: 0;
       padding: 20px 15px;
@@ -18,32 +29,7 @@
       overflow-x: hidden;
       position: relative;
       -webkit-tap-highlight-color: transparent;
-    }
-
-    /* तितली के आस-पास का लाइव बैकग्राउंड थीम कलर (बाहर + बॉक्स दोनों के ऊपर काम करेगा) */
-    #theme-zone-layer {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 4; /* बॉक्स के ऊपर (z-index 3) लेकिन तितली (z-index 5) के ठीक नीचे */
-      overflow: hidden;
-    }
-    .butterfly-theme-zone {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 320px;
-      height: 320px;
-      margin-left: -160px;
-      margin-top: -160px;
-      border-radius: 50%;
-      background: radial-gradient(circle, var(--theme-main) 0%, var(--theme-edge) 52%, transparent 78%);
-      mix-blend-mode: color;
-      opacity: 0.92;
-      will-change: transform;
+      transition: background 1.2s ease;
     }
 
     #butterfly-layer {
@@ -93,7 +79,7 @@
     @keyframes sparkFly { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0); opacity: 0; } }
     .touch-ripple {
       position: absolute; width: 16px; height: 16px; border-radius: 50%;
-      border: 2px solid #facc15; box-shadow: 0 0 14px #f59e0b, inset 0 0 8px #fef08a;
+      border: 2px solid var(--theme-accent); box-shadow: 0 0 14px var(--theme-accent-2), inset 0 0 8px var(--theme-light);
       transform: translate(-50%, -50%) scale(0.2); pointer-events: none;
       animation: touchWave 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -105,10 +91,10 @@
     }
     @keyframes touchSpark { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(0); opacity: 0; } }
     .container { max-width: 600px; width: 100%; position: relative; z-index: 3; }
-    .header { text-align: center; margin-bottom: 22px; position: relative; z-index: 2; }
+    .header { text-align: center; margin-bottom: 22px; position: relative; z-index: 10; }
     .header h1 {
       font-size: 28px; margin: 0 0 6px 0;
-      background: linear-gradient(90deg, #f59e0b, #fef08a, #ffffff, #facc15, #f59e0b);
+      background: linear-gradient(90deg, var(--theme-accent-2), var(--theme-light), #ffffff, var(--theme-accent), var(--theme-accent-2));
       background-size: 250% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       font-weight: 800; animation: textLoopShine 3s linear infinite, floatPulse 2.5s ease-in-out infinite;
     }
@@ -116,18 +102,24 @@
     @keyframes floatPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
     .header p { color: #a1a1aa; margin: 0; font-size: 13px; }
     .card {
-      position: relative; z-index: 2; background: rgba(34, 29, 18, 0.88); backdrop-filter: blur(10px);
-      border: 1px solid rgba(250, 204, 21, 0.42); border-radius: 16px; padding: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 22px rgba(250, 204, 21, 0.14);
+      position: relative; z-index: 2; background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(10px);
+      border: 1px solid var(--theme-border); border-radius: 16px; padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 24px var(--theme-glow);
+      transition: border-color 1s ease, box-shadow 1s ease;
     }
-    .label-row, textarea, button, #resultSection, .status-bar { position: relative; z-index: 2; }
-    .label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: #fef08a; font-weight: 600; }
+    .label-row, textarea, button, #resultSection, .status-bar { position: relative; z-index: 10; }
+    .label-row {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+      font-size: 13px; color: var(--theme-light); font-weight: 600;
+      transition: color 1s ease;
+    }
     textarea {
-      width: 100%; height: 150px; background-color: rgba(24, 20, 12, 0.85); color: #fefce8;
-      border: 1px solid rgba(250, 204, 21, 0.32); border-radius: 12px; padding: 14px;
+      width: 100%; height: 150px; background-color: rgba(9, 9, 11, 0.78); color: #fefce8;
+      border: 1px solid var(--theme-border-soft); border-radius: 12px; padding: 14px;
       font-size: 15px; line-height: 1.5; resize: vertical; margin-bottom: 14px;
+      transition: border-color 1s ease, box-shadow 1s ease;
     }
-    textarea:focus { outline: none; border-color: #facc15; box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2); }
+    textarea:focus { outline: none; border-color: var(--theme-accent); box-shadow: 0 0 0 3px var(--theme-glow); }
     button {
       width: 100%; border: none; padding: 14px 18px; border-radius: 12px; cursor: pointer;
       font-size: 15px; font-weight: 700; transition: all 0.25s ease;
@@ -138,17 +130,28 @@
     .btn-copy { background: linear-gradient(135deg, #06b6d4, #10b981); color: #042f2e; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); }
     .done-grey { background: #3f3f46 !important; color: #d4d4d8 !important; box-shadow: none !important; border: 1px solid #52525b !important; animation: popPulse 0.35s ease; }
     @keyframes popPulse { 0% { transform: scale(1); } 40% { transform: scale(0.92); } 75% { transform: scale(1.03); } 100% { transform: scale(1); } }
-    .btn-ghost { width: auto; background-color: #2e291d; color: #fef08a; border: 1px solid rgba(250, 204, 21, 0.3); padding: 6px 12px; font-size: 12px; border-radius: 8px; }
-    #resultSection { display: none; margin-top: 20px; padding-top: 18px; border-top: 1px dashed rgba(250, 204, 21, 0.4); animation: fadeIn 0.35s ease; }
+    .btn-ghost {
+      width: auto; background-color: var(--theme-btn-bg); color: var(--theme-light);
+      border: 1px solid var(--theme-border-soft); padding: 6px 12px; font-size: 12px; border-radius: 8px;
+      transition: background-color 1s ease, color 1s ease, border-color 1s ease;
+    }
+    #resultSection {
+      display: none; margin-top: 20px; padding-top: 18px;
+      border-top: 1px dashed var(--theme-border); animation: fadeIn 0.35s ease;
+      transition: border-color 1s ease;
+    }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .status-bar { text-align: center; font-size: 13px; color: #facc15; min-height: 18px; margin-top: 12px; font-weight: 500; }
+    .status-bar {
+      text-align: center; font-size: 13px; color: var(--theme-accent);
+      min-height: 18px; margin-top: 12px; font-weight: 500;
+      transition: color 1s ease;
+    }
   </style>
 </head>
 <body>
 
 <audio id="bgSong" src="song.mp3" autoplay loop playsinline preload="auto"></audio>
 
-<div id="theme-zone-layer"></div>
 <div id="butterfly-layer"></div>
 <div id="fx-overlay-layer"></div>
 
@@ -174,7 +177,7 @@
     <div id="resultSection">
       <div class="label-row">
         <span>✅ Bypassed Lyrics Ready</span>
-        <span id="charCount" style="color:#facc15; font-size:12px;">0 chars</span>
+        <span id="charCount" style="color:var(--theme-accent); font-size:12px;">0 chars</span>
       </div>
       
       <textarea id="outputLyrics" readonly></textarea>
@@ -187,7 +190,6 @@
 </div>
 
 <script>
-  const themeZoneLayer = document.getElementById('theme-zone-layer');
   const butterflyLayer = document.getElementById('butterfly-layer');
   const fxOverlayLayer = document.getElementById('fx-overlay-layer');
   const bgSong = document.getElementById('bgSong');
@@ -236,31 +238,81 @@
       name: 'monarch',
       cInner: '#ff9e00', cMid: '#ff5400', cBorder: '#111111', veinColor: '#111111',
       glowColor: '#ff7b00', glowLight: '#ffe066',
-      themeMain: '#ff6a00', themeEdge: 'rgba(255, 106, 0, 0.35)',
+      theme: {
+        bgTop: '#2e1505',
+        accent: '#ff7b00',
+        accent2: '#ea580c',
+        light: '#fed7aa',
+        border: 'rgba(255, 123, 0, 0.38)',
+        borderSoft: 'rgba(255, 123, 0, 0.24)',
+        glow: 'rgba(255, 123, 0, 0.16)',
+        btnBg: '#2e1e12'
+      },
       hasStripes: false
     },
     {
       name: 'morpho',
       cInner: '#38bdf8', cMid: '#0284c7', cBorder: '#090d16', veinColor: '#0c243c',
       glowColor: '#0ea5e9', glowLight: '#bae6fd',
-      themeMain: '#0ea5e9', themeEdge: 'rgba(14, 165, 233, 0.35)',
+      theme: {
+        bgTop: '#072236',
+        accent: '#38bdf8',
+        accent2: '#0284c7',
+        light: '#bae6fd',
+        border: 'rgba(56, 189, 248, 0.38)',
+        borderSoft: 'rgba(56, 189, 248, 0.24)',
+        glow: 'rgba(14, 165, 233, 0.16)',
+        btnBg: '#122636'
+      },
       hasStripes: false
     },
     {
       name: 'swallowtail',
       cInner: '#fef08a', cMid: '#eab308', cBorder: '#14120e', veinColor: '#14120e',
       glowColor: '#eab308', glowLight: '#fef9c3',
-      themeMain: '#eab308', themeEdge: 'rgba(234, 179, 8, 0.35)',
+      theme: {
+        bgTop: '#292008',
+        accent: '#facc15',
+        accent2: '#f59e0b',
+        light: '#fef08a',
+        border: 'rgba(250, 204, 21, 0.35)',
+        borderSoft: 'rgba(250, 204, 21, 0.22)',
+        glow: 'rgba(250, 204, 21, 0.14)',
+        btnBg: '#2e291d'
+      },
       hasStripes: true
     },
     {
       name: 'rose',
       cInner: '#f472b6', cMid: '#db2777', cBorder: '#1a0912', veinColor: '#2e091b',
       glowColor: '#ec4899', glowLight: '#fbcfe8',
-      themeMain: '#ec4899', themeEdge: 'rgba(236, 72, 153, 0.35)',
+      theme: {
+        bgTop: '#310b20',
+        accent: '#f472b6',
+        accent2: '#db2777',
+        light: '#fbcfe8',
+        border: 'rgba(244, 114, 182, 0.38)',
+        borderSoft: 'rgba(244, 114, 182, 0.24)',
+        glow: 'rgba(236, 72, 153, 0.16)',
+        btnBg: '#311726'
+      },
       hasStripes: false
     }
   ];
+
+  // पूरी वेबसाइट का थीम कलर तितली के रंग के हिसाब से बदलने वाला फंक्शन
+  function applyButterflyTheme(sp) {
+    if (!sp || !sp.theme) return;
+    const root = document.documentElement.style;
+    root.setProperty('--theme-bg-top', sp.theme.bgTop);
+    root.setProperty('--theme-accent', sp.theme.accent);
+    root.setProperty('--theme-accent-2', sp.theme.accent2);
+    root.setProperty('--theme-light', sp.theme.light);
+    root.setProperty('--theme-border', sp.theme.border);
+    root.setProperty('--theme-border-soft', sp.theme.borderSoft);
+    root.setProperty('--theme-glow', sp.theme.glow);
+    root.setProperty('--theme-btn-bg', sp.theme.btnBg);
+  }
 
   function createTopViewButterfly(sp, size, tiltDeg) {
     const id = 'top_' + Math.random().toString(36).substr(2, 9);
@@ -335,6 +387,10 @@
     if (activeButterflies >= 3) return;
     activeButterflies++;
     const sp = speciesList[Math.floor(Math.random() * speciesList.length)];
+    if (shouldLand) {
+      applyButterflyTheme(sp);
+    }
+
     const sizes = [52, 62, 70, 78];
     const size = sizes[Math.floor(Math.random() * sizes.length)];
     const isSideView = Math.random() < 0.52;
@@ -343,13 +399,6 @@
     let state = shouldLand ? 'wandering_to_land' : 'passing_through';
     let targetPt = shouldLand ? getRandomPerchSpot(size) : getRandomEdgePoint(startPt.side);
     const flipSide = targetPt.x < curX;
-
-    // तितली के आस-पास का लाइव बैकग्राउंड थीम ज़ोन (बिना लाइट ग्लो के, बॉक्स के ऊपर भी काम करेगा)
-    const themeZoneEl = document.createElement('div');
-    themeZoneEl.className = 'butterfly-theme-zone';
-    themeZoneEl.style.setProperty('--theme-main', sp.themeMain);
-    themeZoneEl.style.setProperty('--theme-edge', sp.themeEdge);
-    themeZoneLayer.appendChild(themeZoneEl);
 
     const el = document.createElement('div');
     el.className = 'butterfly-3d flying';
@@ -360,18 +409,11 @@
     let midPt = { x: window.innerWidth * (0.2 + Math.random() * 0.6), y: window.innerHeight * (0.15 + Math.random() * 0.7) };
     let passedMid = false, perchTimer = 0, nextTriggered = false, wanderNoiseSeed = Math.random() * 100;
 
-    function updateThemeZonePosition(x, y) {
-      const centerX = x + size * 0.5;
-      const centerY = y + size * 0.5;
-      themeZoneEl.style.transform = `translate3d(${centerX}px, ${centerY}px, 0)`;
-    }
-
     function step(now) {
       wanderNoiseSeed += 0.022;
       if (state === 'perched') {
         const idleBreath = Math.sin(wanderNoiseSeed * 1.4) * 1.8;
         el.style.transform = isSideView ? `translate3d(${curX}px, ${curY + idleBreath}px, 0)` : `translate3d(${curX}px, ${curY + idleBreath}px, 0) rotateZ(${curAngle}deg)`;
-        updateThemeZonePosition(curX, curY + idleBreath);
         if (now - perchTimer > 3400 + Math.random() * 1800) {
           state = 'leaving'; el.classList.remove('perched'); el.classList.add('flying'); targetPt = getRandomEdgePoint();
         }
@@ -382,6 +424,7 @@
       if (!passedMid && state !== 'leaving' && dist < 75) passedMid = true;
       if (state === 'wandering_to_land' && passedMid && dist < 12) {
         state = 'perched'; el.classList.remove('flying'); el.classList.add('perched'); perchTimer = now;
+        applyButterflyTheme(sp);
         triggerColorLandingEffect(curX + size * 0.5, curY + size * 0.65, sp);
         if (!nextTriggered) {
           nextTriggered = true;
@@ -393,7 +436,6 @@
       }
       if ((state === 'leaving' || state === 'passing_through') && passedMid && dist < 45) {
         el.remove();
-        themeZoneEl.remove();
         activeButterflies = Math.max(0, activeButterflies - 1);
         if (activeButterflies === 0) setTimeout(() => launchSmartButterfly(true), 700);
         return;
@@ -414,7 +456,6 @@
         const bankAngle = Math.max(-24, Math.min(24, angleDiff * 1.3));
         el.style.transform = `translate3d(${curX}px, ${curY}px, 0) rotateZ(${curAngle}deg) rotateY(${bankAngle}deg)`;
       }
-      updateThemeZonePosition(curX, curY);
       requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
@@ -442,7 +483,7 @@
     btn.disabled = true;
     btn.classList.remove('done-grey');
     btn.innerText = "⏳ Processing...";
-    statusEl.style.color = '#fde047';
+    statusEl.style.color = 'var(--theme-light)';
     statusEl.innerText = "Har letter ke beech invisible character add ho raha hai...";
 
     setTimeout(() => {
@@ -475,7 +516,7 @@
       void btn.offsetWidth;
       btn.classList.add('done-grey');
       btn.innerText = "✅ Done!";
-      statusEl.style.color = '#facc15';
+      statusEl.style.color = 'var(--theme-accent)';
       statusEl.innerText = "✨ Done! Neeche se Copy karke Suno mein paste karein.";
     }, 350);
   }
@@ -492,7 +533,7 @@
       }
       inputBox.value = text;
       resetBypassBtn();
-      statusEl.style.color = '#fde047';
+      statusEl.style.color = 'var(--theme-light)';
       statusEl.innerText = "📥 Lyrics paste ho gaye! Automatic bypass ho raha hai...";
       processLyrics();
     }
@@ -537,7 +578,7 @@
       void copyBtn.offsetWidth;
       copyBtn.classList.add('done-grey');
       copyBtn.innerText = "✅ Copied!";
-      statusEl.style.color = '#fde047';
+      statusEl.style.color = 'var(--theme-light)';
       statusEl.innerText = "🎉 Copied! Ab seedha Suno mein paste kar dein.";
     }
 
